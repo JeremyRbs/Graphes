@@ -13,7 +13,7 @@ class Graphes (tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.title("MBD - Métro, boulot, dodo")  # Titre
-        self.iconphoto(False, tk.PhotoImage(file='C:\\Users\\Jerem\\PycharmProjects\\Graphes\\venv\\Images\\icon.ico')) #Icon
+        self.iconphoto(False, tk.PhotoImage(file='../venv/Images/icon.ico')) #Icon
         self.config(bg='#49A')  # Couleur d'arrière plan
         self.parametre_fenetre()    # Dimensionnement de la fenêtre
         self.fenetre_principale()   # Appel de la fenêtre principale
@@ -48,7 +48,7 @@ class Graphes (tk.Tk):
         self.canevas_principal_1_logo.pack(ipadx=10, ipady=1., expand=True, fill=tk.BOTH, side=tk.LEFT)
 
         # Affichage du logo dans le sous-canevas gauche
-        terre = PhotoImage(file='C:\\Users\\Jerem\\PycharmProjects\\Graphes\\venv\\Images\\icon.ico')   # Récupération de l'image
+        terre = PhotoImage(file='../venv/Images/icon.ico')   # Récupération de l'image
         self.canevas_principal_1_logo.create_image(1, 1, image=terre)   # Création de l'image
         self.canevas_principal_1_logo.pack(expand=True) # Affichage de l'image
 
@@ -115,7 +115,7 @@ class Graphes (tk.Tk):
         self.bouton_retour.pack(side=tk.BOTTOM, pady=15)
 
         # Carte du métro
-        metro = PhotoImage(file='C:\\Users\\Jerem\\PycharmProjects\\Graphes\\venv\\Images\\metro.png')
+        metro = PhotoImage(file='../venv/Images/metro.png')
         self.canevas = Canvas(self, width=self.largeur_fenetre, height=self.taille_fenetre)
         self.canevas.create_image(1, 1, anchor=NW, image=metro)
         self.canevas.config(highlightthickness=0)
@@ -192,7 +192,7 @@ class Graphes (tk.Tk):
         self.bouton_retour.pack(side=tk.BOTTOM, pady=15)
 
         # Carte du métro
-        metro = PhotoImage(file='C:\\Users\\Jerem\\PycharmProjects\\Graphes\\venv\\Images\\metro.png')
+        metro = PhotoImage(file='../venv/Images/metro.png')
         self.canevas = Canvas(self, width=self.largeur_fenetre, height=self.taille_fenetre)
         self.canevas.create_image(1, 1, anchor=NW, image=metro)
         self.canevas.config(highlightthickness=0)

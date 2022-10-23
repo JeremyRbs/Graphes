@@ -28,15 +28,32 @@ def estCycle(matriceAdj):
             return True
     return False
 
-def Kruskal(Matrice):
-    matriceArc = np.zeros((376, 376))
-    file = open("C:\\Users\\lucqu\\PycharmProjects\\graphe\\metro.txt", encoding='utf-8')
-    line = file.readlines()
-    for ligne in lignes:
-        if ligne[:1] == 'E' and ligne.split()[1] != "num_sommet1":
-            tabLigne = ligne.split();
-            matriceArc[int(tabLigne[1])][int(tabLigne[2])] = int(tabLigne[3])
+def nappartient_pas_a_T(j,T):
+    for i in range(len(T)):
+        if(j == T[i]):
+            return false
+    return true
 
-    for i in range(0,376):
-        for j in range(0,376):
-            
+def Kruskal(Matrice):
+    copie_matrice = Matrice
+    matrice_obtenu = np.zeros((376, 376))
+    min = {"poids":0,"sommet_dorigine":0,"sommet_darrive":0};
+    T = list(char);
+    
+    while(len(T)<376):
+        for i in range(0,376):
+            for j in range(0,376):
+                if(copie_matrice[i][j] != 0):
+                    if(copie_matrice[i][j] < min["poids"] and nappartient_pas_a_T(j,T) and not estCycle(matrice_obtenu, i, j)):
+                        min["poids"] = copie_matrice[i][j]
+                        min["sommet_dorigine"] = i
+                        min["sommet_darrive"] = j
+                        matrice_obtenu[i][j] = copie_matrice[i][j]
+                        copie_matrice[i][j] = 0
+                        if (len(T) == 0):
+                            T.append(i)
+                        T.append(j)
+    return T
+
+
+

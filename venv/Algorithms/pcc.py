@@ -18,44 +18,38 @@ def estConnexe(matrice, pointDep):
     return False
 
 
-print(estConnexe(matriceArc, 41))
-
-def dictionary(d):
-    file = open("C:\\Users\\lucqu\\PycharmProjects\\graphe\\metro.txt", encoding='utf-8')
-    line = file.readlines()
-
-    for x in line:
-        if x[:1] == 'E' and x.split()[1] != "num_sommet1":
-            d[str(x.split()[1])] = {}
-
-    for x in line:
-        if x[:1] == 'E' and x.split()[1] != "num_sommet1":
-            d[str(x.split()[1])][str(x.split()[2])] = int(x.split()[3])
-
-    return d
-
-def dijkstra(graph, vertex):
-    queue = deque([vertex])
-    distance = {vertex: 0}
-    while queue:
-        t = queue.popleft()
-        print("On visite le sommet " + str(t))
-        for voisin in graph[t]:
-            if voisin in graph:
-                queue.append(voisin)
-                nouvelle_distance = distance[t] + graph[t][voisin]
-                if (voisin not in distance or nouvelle_distance < distance[voisin]):
-                    distance[voisin] = nouvelle_distance
-                    print("Met à jour le sommet " + str(voisin) + " avec la distance : " + str(nouvelle_distance))
-            else:
-                print("C'est un terminus le sommet ", voisin, " poto ...")
-
-    return distance
 
 
-# Liste d'ajacence du graphe
-graph = {}
-graph = dictionary(graph)
-print(graph)
-#distance = dijkstra(graph, '0')
-#print("Distances" + str(distance))
+
+def afficheTrajet(predecesseurs, depart, fin, trajet):
+    if fin == depart:
+        print("Vous partez de " + nomSommet[int(depart)])
+        for station in trajet:
+            print("puis allez à " + nomSommet[int(station)])
+    else:
+        (afficheTrajet(predecesseurs, depart, predecesseurs[fin], [fin] + trajet))
+
+def plusCourt(graphe, stationDep, stationEnCours, stationArr, visites, distances, predecesseurs):
+    if stationEnCours == stationArr: #Nous sommes arrivés
+        afficheTrajet(predecesseurs, stationDep, stationArr, [])
+        return distances[stationEnCours]
+    if  len(visites) == 0 :
+        distances[stationEnCours] = 0
+    for voisin in graphe[stationEnCours]:
+        if voisin not in visites:
+            # la distance est soit la distance calculée précédemment soit l'infini
+            dist_voisin = distances.get(voisin, float('inf'))
+            # on calcule la nouvelle distance calculée en passant par l'étape
+            new_dist = distances[stationEnCours] + graphe[stationEnCours][voisin]
+            if new_dist < dist_voisin:
+                distances[voisin] = new_dist
+                predecesseurs[voisin] = stationEnCours
+    visites.append(stationEnCours)
+
+    non_visites = dict((s, distances.get(s, float('inf'))) for s in graphe if s not in visites)
+    prochaineStation = min(non_visites, key=non_visites.get)
+    return plusCourt(graphe, stationDep,  prochaineStation, stationArr, visites, distances, predecesseurs)
+
+def dijkstra(graphe,stationDep, stationArr):
+   return plusCourt(graphe, stationDep, stationDep, stationArr, [], {}, {})
+

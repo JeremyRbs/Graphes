@@ -103,9 +103,9 @@ def Kruskal(Matrice):
 
     for i in range(0,len(V)-1):
         matrice_obtenu[V[i]["sommet_dorigine"]][V[i]["sommet_darrive"]] = V[i]["poids"]
-        if(nappartient_pas_a_T(V[i]["sommet_darrive"], T) and not estCycle(matrice_obtenu, V[i]["sommet_dorigine"])):
+        if(nappartient_pas_a_T(V[i]["sommet_darrive"], T) and not estCycle(matrice_obtenu, V[i]["sommet_darrive"])):
             T.append(V[i])
-        elif(estCycle(matrice_obtenu, V[i]["sommet_dorigine"])):
+        elif(estCycle(matrice_obtenu, V[i]["sommet_darrive"])):
             matrice_obtenu[V[i]["sommet_dorigine"]][V[i]["sommet_darrive"]] = 0
     return T
 
@@ -115,22 +115,92 @@ def somme(tab):
         somme += tab[i]["poids"]
     return somme
 
+
+
+def estConnexe(matrice, pointDep):
+    n = len(matrice)  # nombre de sommets dans le graphe
+    tabVisite = [];
+    file = [pointDep];
+    while file:
+        current = file.pop(0)
+        tabVisite.append(current);
+        for i in range(n):
+            if i != current and (matrice[current][i] > 0 or matrice[i][current] > 0) and i not in tabVisite:
+                file.append(i);
+        if len(tabVisite) == n:
+            return True
+    return False
+
+
+
+
+
+def afficheTrajet(predecesseurs, depart, fin, trajet):
+    if fin == depart:
+        print("Vous partez de " + nomSommet[int(depart)])
+        for station in trajet:
+            print("puis allez à " + nomSommet[int(station)])
+    else:
+        (afficheTrajet(predecesseurs, depart, predecesseurs[fin], [fin] + trajet))
+
+def plusCourt(graphe, stationDep, stationEnCours, stationArr, visites, distances, predecesseurs):
+    if stationEnCours == stationArr: #Nous sommes arrivés
+        afficheTrajet(predecesseurs, stationDep, stationArr, [])
+        return distances[stationEnCours]
+    if  len(visites) == 0 :
+        distances[stationEnCours] = 0
+    for voisin in graphe[stationEnCours]:
+        if voisin not in visites:
+            # la distance est soit la distance calculée précédemment soit l'infini
+            dist_voisin = distances.get(voisin, float('inf'))
+            # on calcule la nouvelle distance calculée en passant par l'étape
+            new_dist = distances[stationEnCours] + graphe[stationEnCours][voisin]
+            if new_dist < dist_voisin:
+                distances[voisin] = new_dist
+                predecesseurs[voisin] = stationEnCours
+    visites.append(stationEnCours)
+
+    non_visites = dict((s, distances.get(s, float('inf'))) for s in graphe if s not in visites)
+    prochaineStation = min(non_visites, key=non_visites.get)
+    return plusCourt(graphe, stationDep,  prochaineStation, stationArr, visites, distances, predecesseurs)
+
+def dijkstra(graphe,stationDep, stationArr):
+   return plusCourt(graphe, stationDep, stationDep, stationArr, [], {}, {})
+
 # Main permettant de lancer le programme
 if __name__ == "__main__":
+
+    fichier = open("C:\\Users\\lucqu\\PycharmProjects\\graphe\\metro.txt", "r", encoding="utf-8")
+    lignes = fichier.readlines()
+    dicoGraphe = {}
+    nomSommet = {}
+    for i in range(376):
+        dicoGraphe[str(i)] = {}
+
+    for x in lignes:
+        if x[:1] == 'E' and x.split()[1] != "num_sommet1":
+            dicoGraphe[str(x.split()[1])][str(x.split()[2])] = int(x.split()[3])
+            dicoGraphe[str(x.split()[2])][str(x.split()[1])] = int(x.split()[3])
+        if x[:1] == 'V' and x.split()[1] != "num_sommet":
+            numLigne = str(x.split(";")[1])
+            nomStation = x.split(";")[0].split()
+            del nomStation[0]  # Correspond au 'V'
+            del nomStation[0]  # Correspond au numéro
+            nomSommet[int(x.split()[1])] = ''.join(nomStation) + " ligne " + numLigne
+
 
     d = {}
     #d = dictionary(d)
     #print(d)
     matriceArc = np.zeros((376, 376))
-    file = open("C:\\Users\\lucqu\\PycharmProjects\\graphe\\metro.txt", encoding='utf-8')
-    line = file.readlines()
-    for ligne in line:
+    for ligne in lignes:
         if ligne[:1] == 'E' and ligne.split()[1] != "num_sommet1":
             tabLigne = ligne.split();
             matriceArc[int(tabLigne[1])][int(tabLigne[2])] = int(tabLigne[3])
 
-
-
+    longueur = dijkstra(dicoGraphe, "256", "288")
+    print("Vous devriez arriver dans " + str(round(longueur / 60)) + " minutes. La RATP vous souhaite un bon voyage")
+    print(estConnexe(matriceArc, 41))
     ACPM = Kruskal(matriceArc)
     print("len(ACPM) = ", len(ACPM))
     print(ACPM)

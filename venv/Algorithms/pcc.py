@@ -2,8 +2,26 @@
 
 from collections import deque
 
+
+def estConnexe(matrice, pointDep):
+    n = len(matrice)  # nombre de sommets dans le graphe
+    tabVisite = [];
+    file = [pointDep];
+    while file:
+        current = file.pop(0)
+        tabVisite.append(current);
+        for i in range(n):
+            if i != current and (matrice[current][i] > 0 or matrice[i][current] > 0) and i not in tabVisite:
+                file.append(i);
+        if len(tabVisite) == n:
+            return True
+    return False
+
+
+print(estConnexe(matriceArc, 41))
+
 def dictionary(d):
-    file = open("C:\\Users\\jerem\\PycharmProjects\\Graphes\\venv\\Data\\metro.txt", encoding='utf-8')
+    file = open("C:\\Users\\lucqu\\PycharmProjects\\graphe\\metro.txt", encoding='utf-8')
     line = file.readlines()
 
     for x in line:

@@ -130,10 +130,12 @@ class Graphes (tk.Tk):
 
         # Variable globale pour compter le nombre de clics pour le choix des stations
         global compteur
+        NomStation = ["",""]
+        ID_Gare = [0,0]
 
         # Récupération des coordonnées du clique
         x = event.x - 5
-        y = event.y - 5
+        y = event.y - 5 + 40
 
         # Définition du diamètre du nouveau point (station)
         diametre = 12
@@ -141,16 +143,84 @@ class Graphes (tk.Tk):
         # Si moins de deux stations sont sélectionnées, création d'un point, sinon message d'erreur
         if compteur < 2:
 
+            dicoCoordonnees = {}
+            fichier = open(
+                "C:\\Users\\lucqu\\OneDrive\\Documents\\efrei\\L3\\graphe\\Graphes\\venv\\Data\\pospoints.txt", "r",
+                encoding="utf-8")
+            gare_data = fichier.readlines()
+            characters = "\n"
+
+            for i in range(482):
+                coordonnees_x = gare_data[i].split(";")[0]
+                coordonnees_y = gare_data[i].split(";")[1]
+                nom_gare = gare_data[i].split(";")[2]
+                nom_gare = nom_gare.replace(characters[0], "")
+                nom_gare = nom_gare.split("@")
+                temp = ""
+                for i in range(len(nom_gare)):
+                    temp = temp+nom_gare[i]
+                nom_gare = temp
+                dicoCoordonnees[str(i)] = [coordonnees_x, coordonnees_y, nom_gare]
+
+            print(dicoCoordonnees)
+
+
+
             # Vérifications par des if du bon placement du clique qui doit être sur la carte
             if x > 125 :
-                point = self.canevas.create_oval(x, y, diametre + x, diametre + y, fill="cyan", width=2)    # Affichage du point
-                compteur += 1
+                for i in range(482):
+                    print(int(dicoCoordonnees[str(5)][0]))
+                    if ((x < int(dicoCoordonnees[str(i)][0]) + 5 and x > int(dicoCoordonnees[str(i)][0]) - 5) and (
+                            y < int(dicoCoordonnees[str(i)][1]) + 5 and y > int(dicoCoordonnees[str(i)][1]) - 5)):
+                        point = self.canevas.create_oval(x, y - 40, diametre + x, diametre + y - 40, fill="cyan",
+                                                         width=2)  # Affichage du point
+                        compteur += 1
+                        Nom_station[compteur-1] = dicoCoordonnees[str(i)][2]
 
             else :
                 if y >= 35 and y <= 865:
                     messagebox.showwarning("Attention !", "Cliquer sur la carte")
 
         else :
+
+            fichier = open("C:\\Users\\lucqu\\PycharmProjects\\graphe\\metro.txt", "r", encoding="utf-8")
+            lignes = fichier.readlines()
+            dicoGare = {}
+            dicoGare_Id = []
+            cpt = 0
+            for x in lignes:
+
+                if x[:1] == 'V' and x.split()[1] != "num_sommet":
+                    nomStation_global = x.split(";")[0].split()
+                    del nomStation_global[0]  # on supprime 'V'
+                    data_gare = [nomStation_global[0], ""]
+
+                    for i in range(1, len(nomStation_global)):
+                        data_gare[1] = data_gare[1] + (nomStation_global[i])
+                        if (i < len(nomStation_global) - 1):
+                            data_gare[1] = data_gare[1] + ' '
+
+                    deja_dedans = False
+                    for i in range(len(dicoGare)):
+                        if (data_gare[1] == dicoGare[i]):
+                            deja_dedans = True
+                            id_existant = i
+                    if (deja_dedans != True):
+                        dicoGare.update({cpt: data_gare[1]})
+                        dicoGare_Id.append([cpt, int(data_gare[0])])
+                        cpt += 1
+                    else:
+                        dicoGare_Id.append([id_existant, int(data_gare[0])])
+
+            for i in range(len(dicoGare)):
+                if(dicoGare[i][1] == Nom_Sation[0]):
+                    ID_Gare[0] = i
+                if (dicoGare[i][1] == Nom_Sation[1]):
+                    ID_Gare[1] = i
+
+            print(NomStation)
+            print(ID_Gare)
+
             if x > 100:
                 messagebox.showerror("Erreur !", "Deux stations déjà sélectionnées !")
 

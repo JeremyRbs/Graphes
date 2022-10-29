@@ -7,8 +7,9 @@ import numpy as np
 
 from time import strftime
 from Windows.home import Graphes
-#from Algorithms.pcc import *
-#from Algorithms.acpm import *
+from Algorithms.connexe import *
+from Algorithms.pcc import *
+from Algorithms.acpm import *
 
 def ExistChemin(matriceAdj, u, v):
     n = len(matriceAdj)  # nombre de sommets
@@ -79,7 +80,6 @@ def afficher_list(list):
     for i in range(len(list)):
         print("list[",i,"] = ", list[i])
 
-
 def Kruskal(Matrice):
     copie_matrice = Matrice
     matrice_obtenu = np.zeros((376, 376))
@@ -118,33 +118,13 @@ def somme(tab):
         somme += tab[i]["poids"]
     return somme
 
-
-
-def estConnexe(matrice, pointDep):
-    n = len(matrice)  # nombre de sommets dans le graphe
-    tabVisite = [];
-    file = [pointDep];
-    while file:
-        current = file.pop(0)
-        tabVisite.append(current);
-        for i in range(n):
-            if i != current and (matrice[current][i] > 0 or matrice[i][current] > 0) and i not in tabVisite:
-                file.append(i);
-        if len(tabVisite) == n:
-            return True
-    return False
-
-
-
-
-
 def afficheTrajet(predecesseurs, depart, fin, trajet):
     temp = []
     if fin == depart:
         print("Vous partez de " + nomSommet[int(depart)])
         temp.append(nomSommet[int(depart)])
         for station in trajet:
-            print("puis allez à " + nomSommet[int(station)])
+            print("Puis allez à " + nomSommet[int(station)])
             temp.append(nomSommet[int(station)])
         return temp
     else:
@@ -174,15 +154,10 @@ def plusCourt(graphe, stationDep, stationEnCours, stationArr, visites, distances
 def dijkstra(graphe,stationDep, stationArr):
    return plusCourt(graphe, stationDep, stationDep, stationArr, [], {}, {})
 
-
-
-
-
-
 # Main permettant de lancer le programme
 if __name__ == "__main__":
 
-    fichier = open("C:\\Users\\lucqu\\PycharmProjects\\graphe\\metro.txt", "r", encoding="utf-8")
+    fichier = open("../venv/Data/metro.txt", "r", encoding="utf-8")
     lignes = fichier.readlines()
     dicoGraphe = {}
     nomSommet = {}
@@ -202,7 +177,7 @@ if __name__ == "__main__":
 
     global dicoCoordonnees
     dicoCoordonnees = {}
-    fichier = open("C:\\Users\\lucqu\\OneDrive\\Documents\\efrei\\L3\\graphe\\Graphes\\venv\\Data\\pospoints.txt", "r", encoding="utf-8")
+    fichier = open("../venv/Data/pospoints.txt", "r", encoding="utf-8")
     gare_data = fichier.readlines()
     characters = "\n"
 
@@ -213,10 +188,6 @@ if __name__ == "__main__":
         nom_gare = nom_gare.replace(characters[0],"")
         dicoCoordonnees[i] = [coordonnees_x, coordonnees_y, nom_gare]
 
-
-
-
-
     matriceArc = np.zeros((376, 376))
     for ligne in lignes:
         if ligne[:1] == 'E' and ligne.split()[1] != "num_sommet1":
@@ -226,11 +197,8 @@ if __name__ == "__main__":
 
     running = True
     while(running==True):
-        print("\n\n\n\n\n")
-        print("Bienvuenue sur le Projet Metro Boulot Dodo")
-        choix = input("Que voulez_vous faire ?\n 1 - Verifier la connexité\n  2 - Trouvez votre itinaraire optaimal entre deux stations\n 3 - Afficher l'ACPM\n 4 - Quitter\n")
-        print(choix)
-
+        print("\n/////////////////////////////////////////////////\n/// Bienvenue sur le Projet Metro Boulot Dodo ///\n/////////////////////////////////////////////////\n")
+        choix = input("Que voulez_vous faire ?\n\n1 - Vérifier la connexité\n2 - Trouver votre itinéraire optimal entre deux stations\n3 - Afficher l'ACPM\n4 - Quitter\n\nChoix : ")
 
         match choix:
 
@@ -238,18 +206,19 @@ if __name__ == "__main__":
 
                 est_connexe = estConnexe(matriceArc,0)
                 if(est_connexe):
-                    print("Le graphe est bien Connexe !")
+                    print("Le graphe est bien connexe !")
                 else:
                     print("Le graphe n'est pas connexe !")
 
             case '2':
 
 
-                print("Nous allons vous demandez de remplir les informations concernant la station de metro:")
-                Nom_gare_dep = input("Quel est le nom de votre station de depart ?")
-                Ligne_station_depart = input("Quel est la ligne de votre station de depart ?")
-                Nom_gare_arrive = input("Quel est le nom de votre station de depart ?")
-                Ligne_station_arrive = input("Quel est la ligne de votre station de depart ?")
+                print("\nNous allons vous demander de remplir les informations concernant la station de metro : ")
+                Nom_gare_dep = input("\nQuel est le nom de votre station de départ ?\nStation 1 : ")
+                Ligne_station_depart = input("\nQuel est la ligne de votre station de départ ?\nLigne : ")
+                Nom_gare_arrive = input("\nQuel est le nom de votre station d'arrivée ?\nStation 2 : ")
+                Ligne_station_arrive = input("\nQuel est la ligne de votre station d'arrivée' ?\nLigne : ")
+                print("\n")
 
                 Nom_gare_dep = Nom_gare_dep.split(" ")
                 temp = ""
@@ -275,22 +244,19 @@ if __name__ == "__main__":
                         arr = str(i)
 
                 longueur = dijkstra(dicoGraphe, dep, arr)
-                print("Vous devriez arriver dans " + str(round(longueur / 60)) + " minutes. La RATP vous souhaite un bon voyage")
+                print("\nVous devriez arriver dans " + str(round(longueur / 60)) + " minutes. La RATP vous souhaite un bon voyage !")
 
             case '3':
-                print("Voici Notre ACPM :")
+                print("\nVoici Notre ACPM :")
                 ACPM = Kruskal(matriceArc)
                 for i in range(len(ACPM)):
                     if(i==0):
                         print("Nous partons de ", nomSommet[ACPM[i]["sommet_dorigine"]])
-                    print("Puis nous allons a ", nomSommet[ACPM[i]["sommet_darrive"]])
-                print("\n\n\n Soit un total de ", len(ACPM), " sommets.")
+                    print("Puis nous allons à ", nomSommet[ACPM[i]["sommet_darrive"]])
+                print("\nSoit un total de ", len(ACPM), " sommets.")
                 print("Et pour un total de temps de trajet de ", round(somme(ACPM)/60), " minutes.")
             case '4':
                 running = 0;
-
-
-
 
     #app = Graphes()
     #app.mainloop()

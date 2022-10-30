@@ -8,10 +8,10 @@ import numpy as np
 from time import strftime
 from Windows.home import Graphes
 from Algorithms.connexe import *
-from Algorithms.pcc import *
-from Algorithms.acpm import *
 
+# Méthode permettant de vérifier l'existance d'un chemin
 def ExistChemin(matriceAdj, u, v):
+
     n = len(matriceAdj)  # nombre de sommets
     file = []
     visites = [False] * n
@@ -31,8 +31,9 @@ def ExistChemin(matriceAdj, u, v):
     # pas de chemin entre u et v
     return False
 
-
+# Méthode permettant de vérifier si un cycle existe
 def estCycle(matriceAdj, u):
+
     n = len(matriceAdj)
     file = []
     visites = [False] * n
@@ -63,7 +64,6 @@ def estCycle(matriceAdj, u):
 
     return False
 
-
 def nappartient_pas_a_T(i,j, T):
     for k in range(len(T)):
         if (j == T[k]["sommet_darrive"] and i == T[k]["sommet_dorigine"]):
@@ -76,11 +76,14 @@ def nappartient_pas_a_V(i,j, V):
             return False
     return True
 
+# Méthode permettant d'afficher la liste des chemins
 def afficher_list(list):
     for i in range(len(list)):
         print("list[",i,"] = ", list[i])
 
+# Méthode permettant d'effectuer l'algorithme pour l'abre couvrant de poids minimum
 def Kruskal(Matrice):
+
     copie_matrice = Matrice
     matrice_obtenu = np.zeros((376, 376))
     min = {"poids": 1000, "sommet_dorigine": 0, "sommet_darrive": 0};
@@ -112,14 +115,21 @@ def Kruskal(Matrice):
         i += 1
     return T
 
+# Méthode permettant d'ajouter les poids au fur et à mesure du trajet
 def somme(tab):
+
     somme = 0
+
+    # Ajout des poids
     for i in range(0,len(tab)):
         somme += tab[i]["poids"]
     return somme
 
+# Méthode permettant d'afficher le trajet trouvé
 def afficheTrajet(predecesseurs, depart, fin, trajet):
+
     temp = []
+
     if fin == depart:
         print("Vous partez de " + nomSommet[int(depart)])
         temp.append(nomSommet[int(depart)])
@@ -130,33 +140,45 @@ def afficheTrajet(predecesseurs, depart, fin, trajet):
     else:
         return afficheTrajet(predecesseurs, depart, predecesseurs[fin], [fin] + trajet)
 
+# Méthode permettant d'effectuer l'algorithme du plus court chemin
 def plusCourt(graphe, stationDep, stationEnCours, stationArr, visites, distances, predecesseurs):
-    if stationEnCours == stationArr: #Nous sommes arrivés
+
+    if stationEnCours == stationArr:    # si c'est égal nous sommes arrivés
         afficheTrajet(predecesseurs, stationDep, stationArr, [])
         return distances[stationEnCours]
+
     if  len(visites) == 0 :
         distances[stationEnCours] = 0
+
     for voisin in graphe[stationEnCours]:
+
         if voisin not in visites:
+
             # la distance est soit la distance calculée précédemment soit l'infini
             dist_voisin = distances.get(voisin, float('inf'))
+
             # on calcule la nouvelle distance calculée en passant par l'étape
             new_dist = distances[stationEnCours] + graphe[stationEnCours][voisin]
+
             if new_dist < dist_voisin:
                 distances[voisin] = new_dist
                 predecesseurs[voisin] = stationEnCours
+
     visites.append(stationEnCours)
 
     non_visites = dict((s, distances.get(s, float('inf'))) for s in graphe if s not in visites)
     prochaineStation = min(non_visites, key=non_visites.get)
+
     return plusCourt(graphe, stationDep,  prochaineStation, stationArr, visites, distances, predecesseurs)
 
+# Méthode permettant de lancer l'algorithme du plus court chemin
 def dijkstra(graphe,stationDep, stationArr):
    return plusCourt(graphe, stationDep, stationDep, stationArr, [], {}, {})
 
 # Main permettant de lancer le programme
 if __name__ == "__main__":
 
+    # Déclarations et initialisations des différentes variables pour la création du dictionnaire de sommets
     fichier = open("../venv/Data/metro.txt", "r", encoding="utf-8")
     lignes = fichier.readlines()
     dicoGraphe = {}
@@ -175,6 +197,8 @@ if __name__ == "__main__":
             del nomStation[0]  # Correspond au numéro
             nomSommet[int(x.split()[1])] = ''.join(nomStation) + " ligne " + numLigne
 
+    # Déclarations et initialisations des différentes variables pour la création
+    # du dictionnaire des coordonnées des sommets
     global dicoCoordonnees
     dicoCoordonnees = {}
     fichier = open("../venv/Data/pospoints.txt", "r", encoding="utf-8")
@@ -196,7 +220,9 @@ if __name__ == "__main__":
 
 
     running = True
+
     while(running==True):
+
         print("\n/////////////////////////////////////////////////\n/// Bienvenue sur le Projet Metro Boulot Dodo ///\n/////////////////////////////////////////////////\n")
         choix = input("Que voulez_vous faire ?\n\n1 - Vérifier la connexité\n2 - Trouver votre itinéraire optimal entre deux stations\n3 - Afficher l'ACPM\n4 - Quitter\n\nChoix : ")
 
@@ -204,6 +230,7 @@ if __name__ == "__main__":
 
             case '1':
 
+                # Vérification de la connexité du graphe
                 est_connexe = estConnexe(matriceArc,0)
                 if(est_connexe):
                     print("Le graphe est bien connexe !")
@@ -212,7 +239,7 @@ if __name__ == "__main__":
 
             case '2':
 
-
+                # Demande d'informations
                 print("\nNous allons vous demander de remplir les informations concernant la station de metro : ")
                 Nom_gare_dep = input("\nQuel est le nom de votre station de départ ?\nStation 1 : ")
                 Ligne_station_depart = input("\nQuel est la ligne de votre station de départ ?\nLigne : ")
@@ -222,20 +249,20 @@ if __name__ == "__main__":
 
                 Nom_gare_dep = Nom_gare_dep.split(" ")
                 temp = ""
+
                 for i in range(len(Nom_gare_dep)):
                     temp = temp + Nom_gare_dep[i]
+
                 Nom_gare_dep = temp
-
                 Nom_gare_dep = Nom_gare_dep + " ligne " + Ligne_station_depart + " "
-
                 Nom_gare_arrive = Nom_gare_arrive.split(" ")
                 temp = ""
+
                 for i in range(len(Nom_gare_arrive)):
                     temp = temp + Nom_gare_arrive[i]
+
                 Nom_gare_arrive = temp
-
                 Nom_gare_arrive = Nom_gare_arrive + " ligne " + Ligne_station_arrive + " "
-
 
                 for i in range(len(nomSommet)):
                     if(nomSommet[i] == Nom_gare_dep):
@@ -247,15 +274,20 @@ if __name__ == "__main__":
                 print("\nVous devriez arriver dans " + str(round(longueur / 60)) + " minutes. La RATP vous souhaite un bon voyage !")
 
             case '3':
+
                 print("\nVoici Notre ACPM :")
                 ACPM = Kruskal(matriceArc)
+
+                # Affichage du résultat de Kruskal
                 for i in range(len(ACPM)):
                     if(i==0):
                         print("Nous partons de ", nomSommet[ACPM[i]["sommet_dorigine"]])
                     print("Puis nous allons à ", nomSommet[ACPM[i]["sommet_darrive"]])
                 print("\nSoit un total de ", len(ACPM), " sommets.")
                 print("Et pour un total de temps de trajet de ", round(somme(ACPM)/60), " minutes.")
+
             case '4':
+
                 running = 0;
 
     #app = Graphes()

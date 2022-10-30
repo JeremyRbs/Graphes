@@ -1,7 +1,11 @@
+# Méthode permettant de vérifier si le graphe fourni est connexe
 def estConnexe(matrice, pointDep):
+
     n = len(matrice)  # nombre de sommets dans le graphe
-    tabVisite = [];
+    tabVisite = [];     # tableau des sommets visités
     file = [pointDep];
+
+    # Tant que des points existent
     while file:
         current = file.pop(0)
         tabVisite.append(current);

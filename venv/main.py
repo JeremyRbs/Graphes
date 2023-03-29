@@ -285,7 +285,7 @@ if __name__ == "__main__":
                         print("Nous partons de ", nomSommet[ACPM[i]["sommet_dorigine"]])
                     print("Puis nous allons a ", nomSommet[ACPM[i]["sommet_darrive"]])
                 print("\n\n\n Soit un total de ", len(ACPM), " sommets.")
-                print("Et pour un total de temps de trajet de ", round(somme(ACPM)/60), " minutes.")
+                print("Et pour un total de temps de trajet de ", somme(ACPM), " secondes.")
             case '4':
                 running = 0;
 
